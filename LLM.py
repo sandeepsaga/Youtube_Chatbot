@@ -31,9 +31,9 @@ class YouTubeAIPipeline:
             # If you don’t care which language, this returns the “best” one
             transcript_li = YouTubeTranscriptApi()
             transcript_list=transcript_li.fetch(video_id,languages=['en'],cookies="cookies.txt")
-            
+
             # Flatten it to plain text
-            transcript = " ".join(chunk.text for chunk in transcript_list)
+            transcript = " ".join(chunk['text'] for chunk in transcript_list)
             # print(transcript)
 
         except TranscriptsDisabled:
