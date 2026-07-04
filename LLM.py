@@ -29,8 +29,8 @@ class YouTubeAIPipeline:
         video_id = self._get_video_id(url)
         try:
             # If you don’t care which language, this returns the “best” one
-            transcript_li = YouTubeTranscriptApi()
-            transcript_list=transcript_li.fetch(video_id,languages=['en'],cookies="cookies.txt")
+            transcript_li = YouTubeTranscriptApi(cookies="cookies.txt")
+            transcript_list=transcript_li.fetch(video_id,languages=['en'])
 
             # Flatten it to plain text
             transcript = " ".join(chunk['text'] for chunk in transcript_list)
@@ -38,6 +38,9 @@ class YouTubeAIPipeline:
 
         except TranscriptsDisabled:
             print("No captions available for this video.")
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            raise ValueError(f"Transcript processing failed: {str(e)}")
 
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         chunks = splitter.create_documents([transcript])
