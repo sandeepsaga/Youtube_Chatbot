@@ -4,6 +4,7 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough, Runn
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_groq import ChatGroq
+from youtube_transcript_api.proxies import WebshareProxyConfig
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from dotenv import load_dotenv
@@ -29,8 +30,13 @@ class YouTubeAIPipeline:
         video_id = self._get_video_id(url)
         try:
             # If you don’t care which language, this returns the “best” one
-            transcript_li = YouTubeTranscriptApi(cookies="cookies.txt")
-            transcript_list=transcript_li.fetch(video_id,languages=['en'])
+            ytt_api = YouTubeTranscriptApi(
+                proxy_config=WebshareProxyConfig(
+                    proxy_username="nbvdbocw",
+                    proxy_password="su047zkg5vei",
+                  )
+            )
+            transcript_list=ytt_api.fetch(video_id,languages=['en'])
 
             # Flatten it to plain text
             transcript = " ".join(chunk['text'] for chunk in transcript_list)
